@@ -2,4 +2,7 @@
     <string name="app_name">Заметки 2025</string>
     <string name="main_title">Заметки 413</string>
     <string name="add_note">Добавить заметку</string>
+    <string name="lblTitle">"Заголовок: "</string>
+    <string name="lblText">Текст заметки:</string>
+    <string name="lblCreationTime">Дата и время создания:</string>
 </resources>

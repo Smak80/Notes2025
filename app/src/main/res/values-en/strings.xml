@@ -3,4 +3,7 @@
     <string name="app_name">Notes 2025</string>
     <string name="main_title">Notes 413</string>
     <string name="add_note">Add note</string>
+    <string name="lblTitle">"Title: "</string>
+    <string name="lblText">Note\'s text:</string>
+    <string name="lblCreationTime">Creation time:</string>
 </resources>

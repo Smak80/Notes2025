@@ -1,17 +1,26 @@
 package ru.smak.notes2025.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import ru.smak.notes2025.R
 import ru.smak.notes2025.models.Note
 import ru.smak.notes2025.ui.theme.Notes2025Theme
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 fun NoteCard(
@@ -32,34 +43,55 @@ fun NoteCard(
     editAction: (Note)->Unit = {},
     deleteAction: (Note)->Unit = {},
 ){
-    ElevatedCard(modifier = modifier, onClick = {
-        editAction(note)
-    }) {
+    val date = note.creation.format(
+        DateTimeFormatter.ofLocalizedDateTime(
+            FormatStyle.SHORT
+        )
+    )
+
+    ElevatedCard(
+        modifier = modifier,
+        onClick = {
+            editAction(note)
+        }
+    ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(text = note.title,
-                modifier = Modifier.padding(8.dp),
-                fontWeight = FontWeight.Bold,
-            )
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth().padding(4.dp),
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Text(text = note.text,
-                modifier = Modifier.padding(8.dp),
-                fontWeight = FontWeight.Bold,
-            )
-            IconButton(
-                onClick = {
-                    deleteAction(note)
-                },
-                modifier.align(Alignment.End)
-            ) {
-                Icon(
-                    painterResource(R.drawable.twotone_delete_24),
-                    contentDescription = stringResource(R.string.add_note),
-                    tint = MaterialTheme.colorScheme.error
+            if (note.title.isNotBlank())
+                Text(text = note.title,
+                    modifier = Modifier.padding(8.dp),
+                    fontWeight = FontWeight.Bold,
                 )
+            if (note.text.isNotBlank() && note.title.isNotBlank())
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    thickness = 2.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            if (note.text.isNotBlank())
+                Text(text = note.text,
+                    modifier = Modifier.padding(8.dp),
+                    fontWeight = FontWeight.Normal,
+                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(date)
+                IconButton(
+                    onClick = {
+                        deleteAction(note)
+                    },
+                )
+                {
+                    Icon(
+                        painterResource(R.drawable.twotone_delete_24),
+                        contentDescription = stringResource(R.string.add_note),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
             }
         }
     }
@@ -76,7 +108,87 @@ fun NoteCardPreview(){
 }
 
 @Composable
-fun NoteList(){
-    LazyVerticalGrid() {  }
+fun NoteList(
+    cards: List<Note>,
+    modifier: Modifier = Modifier
+){
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(180.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalItemSpacing = 8.dp,
+        modifier = modifier,
+    ){
+        items(cards) {
+            NoteCard(it)
+        }
+    }
+
 }
 
+@Composable
+@Preview
+fun NoteListPreview(){
+    Notes2025Theme {
+        val cardList = listOf(
+            Note("Заметка 1", "Это текст заметки №1, который будет достаточно длинным."),
+            Note(text = "Это текст заметки №2, который будет достаточно длинным."),
+            Note("Заметка 3"),
+            Note(),
+            Note("Заметка 5", "Это текст заметки №5, который будет достаточно длинным.")
+        )
+        NoteList(cardList)
+    }
+}
+
+@Composable
+fun EditNote(
+    note: Note,
+    modifier: Modifier = Modifier,
+){
+    Column (
+        modifier = modifier,
+    ){
+        OutlinedTextField(
+            value = note.title,
+            onValueChange = { note.title = it },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            label = {
+                Text(stringResource(R.string.lblTitle))
+            }
+        )
+        OutlinedTextField(
+            value = note.text,
+            onValueChange = { note.text = it },
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            singleLine = false,
+            maxLines = 10,
+            label = {
+                Text(stringResource(R.string.lblText))
+            }
+        )
+        val date = note.creation.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
+        OutlinedTextField(
+            value = date,
+            onValueChange = { },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            maxLines = 1,
+            readOnly = true,
+            label = {
+                Text(stringResource(R.string.lblCreationTime))
+            }
+        )
+
+    }
+}
+
+@Composable
+@Preview
+fun EditNotePreview(){
+    Notes2025Theme {
+        EditNote(Note())
+    }
+}
