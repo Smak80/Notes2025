@@ -19,6 +19,23 @@ class MainViewModel : ViewModel() {
         currentNote = Note()
         currentView = ViewType.EDIT_MODE
     }
+
+    fun editNote(note: Note){
+        currentNote = note
+        currentView = ViewType.EDIT_MODE
+    }
+
+    fun deleteNote(note: Note){
+        notes.remove(note)
+    }
+
+    fun toListMode(){
+        currentView = ViewType.LIST_MODE
+        currentNote?.let {
+            if (!it.isEmpty && it !in notes) notes.add(it)
+            if (it.isEmpty) deleteNote(it)
+        }
+    }
 }
 
 enum class ViewType{

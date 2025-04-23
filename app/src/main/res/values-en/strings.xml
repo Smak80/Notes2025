@@ -6,4 +6,5 @@
     <string name="lblTitle">"Title: "</string>
     <string name="lblText">Note\'s text:</string>
     <string name="lblCreationTime">Creation time:</string>
+    <string name="back">Назад</string>
 </resources>

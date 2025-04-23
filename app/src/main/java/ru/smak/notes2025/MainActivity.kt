@@ -12,6 +12,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -42,6 +43,18 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         TopAppBar(
                             title = { Text(stringResource(R.string.main_title)) },
+                            navigationIcon = {
+                                if (viewModel.currentView == ViewType.EDIT_MODE) {
+                                    IconButton(onClick = {
+                                        viewModel.toListMode()
+                                    }) {
+                                        Icon(
+                                            painterResource(R.drawable.baseline_arrow_back_24),
+                                            contentDescription = stringResource(R.string.back),
+                                        )
+                                    }
+                                }
+                            },
                             colors = TopAppBarDefaults.topAppBarColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 titleContentColor = MaterialTheme.colorScheme.onPrimary,
@@ -62,8 +75,20 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
                         when (viewModel.currentView) {
-                            ViewType.LIST_MODE -> NoteList(viewModel.notes, modifier = Modifier.fillMaxSize())
-                            ViewType.EDIT_MODE -> EditNote(viewModel.currentNote!!, modifier = Modifier.fillMaxSize())
+                            ViewType.LIST_MODE -> NoteList(
+                                viewModel.notes,
+                                modifier = Modifier.fillMaxSize(),
+                                onEditNote = {viewModel.editNote(it)},
+                                onDeleteNote = { viewModel.deleteNote(it)}
+                            )
+                            ViewType.EDIT_MODE -> {
+                                viewModel.currentNote?.let {
+                                    EditNote(
+                                        it,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                } ?: run { viewModel.currentView = ViewType.LIST_MODE }
+                            }
                         }
                     }
                 }

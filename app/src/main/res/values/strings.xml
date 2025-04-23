@@ -5,4 +5,5 @@
     <string name="lblTitle">"Заголовок: "</string>
     <string name="lblText">Текст заметки:</string>
     <string name="lblCreationTime">Дата и время создания:</string>
+    <string name="back">Назад</string>
 </resources>

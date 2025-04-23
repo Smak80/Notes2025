@@ -6,4 +6,7 @@ data class Note(
     var title: String = "",
     var text : String = "",
     val creation: LocalDateTime = LocalDateTime.now(),
-)
+){
+    val isEmpty: Boolean
+        get() = title.isBlank() && text.isBlank()
+}
