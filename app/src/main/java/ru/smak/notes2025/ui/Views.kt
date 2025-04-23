@@ -2,6 +2,7 @@ package ru.smak.notes2025.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -115,9 +116,10 @@ fun NoteList(
         columns = StaggeredGridCells.Adaptive(180.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalItemSpacing = 8.dp,
+        contentPadding = PaddingValues(8.dp),
         modifier = modifier,
     ){
-        items(cards) {
+        items(cards.reversed()) {
             NoteCard(it,
                 deleteAction = { onDeleteNote(it) },
                 editAction = {onEditNote(it)})

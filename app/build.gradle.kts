@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "ru.smak.notes2025"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "ru.smak.notes2025"
         minSdk = 29
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
