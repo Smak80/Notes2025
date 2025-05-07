@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import ru.smak.notes2025.models.Note
+import ru.smak.notes2025.database.Note
 
 class MainViewModel : ViewModel() {
 
