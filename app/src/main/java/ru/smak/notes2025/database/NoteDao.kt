@@ -19,10 +19,10 @@ interface NoteDao {
     @Delete(Note::class)
     suspend fun deleteNote(note: Note)
 
-    @Query("select * from notes where id=:id")
+    @Query("select * from note where id=:id")
     suspend fun getNote(id: Long): Note?
 
-    @Query("select * from notes ORDER BY creation_time DESC")
+    @Query("select * from note ORDER BY creation_time DESC")
     fun getAllNotes(): Flow<List<Note>>
 
 }
