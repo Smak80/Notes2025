@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,12 +29,18 @@ import ru.smak.notes2025.ui.NoteList
 import ru.smak.notes2025.ui.theme.Notes2025Theme
 import kotlin.system.exitProcess
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.smak.notes2025.database.Note
 
 class MainActivity : ComponentActivity() {
+
+    val viewModel by viewModels<MainViewModel>()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.loadNotes(applicationContext)
+
         enableEdgeToEdge()
         setContent {
             FullContent(Modifier.fillMaxSize())
@@ -57,7 +64,7 @@ fun FullContent(
         Scaffold(
             modifier = modifier,
             topBar = { Header() },
-            floatingActionButton = { AddNoteButton() },
+            floatingActionButton = { if (viewModel.currentView == ViewType.LIST_MODE) AddNoteButton() },
         ) { innerPadding ->
             MainContent(modifier = Modifier.padding(innerPadding))
         }
@@ -98,10 +105,11 @@ fun MainContent(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = viewModel(),
 ){
+    val notes: List<Note> = viewModel.notes?.collectAsState(listOf())?.value ?: listOf()
     Column(modifier = modifier) {
         when (viewModel.currentView) {
             ViewType.LIST_MODE -> NoteList(
-                viewModel.notes,
+                notes,
                 modifier = Modifier.fillMaxSize(),
                 onEditNote = {viewModel.editNote(it)},
                 onDeleteNote = { viewModel.deleteNote(it)}

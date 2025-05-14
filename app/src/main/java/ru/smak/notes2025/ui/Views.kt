@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -22,6 +24,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -180,6 +184,9 @@ fun NoteList(
     onEditNote: (Note)->Unit = {},
     onDeleteNote: (Note)->Unit = {},
 ){
+    Filter(
+        modifier = Modifier.fillMaxWidth()
+    )
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(180.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -191,6 +198,7 @@ fun NoteList(
             NoteItem(it,
                 deleteAction = { onDeleteNote(it) },
                 editAction = {onEditNote(it)})
+
         }
     }
 
@@ -264,4 +272,47 @@ fun EditNotePreview(){
     Notes2025Theme {
         EditNote(Note())
     }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Filter(
+    modifier: Modifier = Modifier,
+){
+    var query by remember {mutableStateOf("")}
+    SearchBar(
+        modifier = modifier,
+        inputField = {
+            SearchBarDefaults.InputField(
+                query = query,
+                onSearch = {},
+                onQueryChange = {query = it},
+                expanded = false,
+                onExpandedChange = {},
+                placeholder = {  },
+                leadingIcon = {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    )
+                },
+                trailingIcon = {
+                    if (query.isNotEmpty()) {
+                        Icon(
+                            Icons.Default.Clear,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                    }
+                },
+            )
+        },
+        expanded = false,
+        onExpandedChange = {},
+        colors = SearchBarDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        )
+    ) { }
 }
