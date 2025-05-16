@@ -1,6 +1,5 @@
 package ru.smak.notes2025.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -58,24 +57,20 @@ fun NoteItem(
     editAction: (Note)->Unit = {},
     deleteAction: (Note)->Unit = {},
 ){
-    val context = LocalContext.current
-    val currentNote by rememberUpdatedState(note)
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
             when(it) {
                 SwipeToDismissBoxValue.StartToEnd -> {
                     deleteAction(note)
-                    Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show()
                 }
                 SwipeToDismissBoxValue.EndToStart -> {
                     deleteAction(note)
-                    Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show()
                 }
                 SwipeToDismissBoxValue.Settled -> return@rememberSwipeToDismissBoxState false
             }
             return@rememberSwipeToDismissBoxState true
         },
-        positionalThreshold = { it * .75f },
+        positionalThreshold = { it * .50f },
     )
     SwipeToDismissBox(
         state = dismissState,
@@ -84,12 +79,12 @@ fun NoteItem(
             DismissBackground(dismissState)
         },
         content = {
-            NoteCard(currentNote, editAction = editAction)
+            NoteCard(note, editAction = editAction)
         }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun DismissBackground(dismissState: SwipeToDismissBoxState) {
     val color = when (dismissState.dismissDirection) {
@@ -194,11 +189,14 @@ fun NoteList(
         contentPadding = PaddingValues(8.dp),
         modifier = modifier,
     ){
-        items(cards.reversed()) {
-            NoteItem(it,
+        items(cards.reversed(), key = {
+            it.id
+        }) {
+            NoteItem(
+                it,
                 deleteAction = { onDeleteNote(it) },
-                editAction = {onEditNote(it)})
-
+                editAction = { onEditNote(it) }
+            )
         }
     }
 
